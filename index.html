@@ -1,101 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Editor and Preview</title>
-    <style>
-        body, html { height: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        .container { display: flex; flex-direction: column; height: 100vh; }
-        #controls { padding: 10px; background: #f0f0f0; }
-        #content { flex: 1; display: flex; overflow: hidden; }
-        #editor, #preview { flex: 1; border: none; }
-        #editor { resize: none; }
-        .hidden { display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Project Hub</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    a { text-decoration: none; color: blue; font-size: 24px; display: block; margin: 20px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="content">
-            <textarea id="editor"></textarea>
-            <iframe id="preview"></iframe>
-        </div>
-        <div id="controls">
-            <select id="viewMode">
-                <option value="editor">Editor Only</option>
-                <option value="split">Split View</option>
-                <option value="preview">Preview Only</option>
-                <option value="display">Display the html only</option>
-            </select>
-        </div>
-    </div>
 
-    <script>
-        const editor = document.getElementById('editor');
-        const preview = document.getElementById('preview');
-        const viewMode = document.getElementById('viewMode');
-        const controls = document.getElementById('controls');
+  <h1>Welcome to My Project Hub</h1>
 
-        function updateURL() {
-            const params = new URLSearchParams();
-            params.set('m', viewMode.value);
-            params.set('c', editor.value);
-            history.replaceState(null, '', `?${params.toString()}`);
-        }
+  <a href="browsepad/index.html">Browsepad Project</a>
+  <a href="bootly/index.html">Bootly - Link Shortener</a>
 
-        function updatePreview() {
-            const previewDoc = preview.contentDocument;
-            previewDoc.open();
-            previewDoc.write(editor.value);
-            previewDoc.close();
-        }
-
-        function updateLayout() {
-            switch(viewMode.value) {
-                case 'editor':
-                    editor.classList.remove('hidden');
-                    preview.classList.add('hidden');
-                    controls.classList.remove('hidden');
-                    break;
-                case 'split':
-                    editor.classList.remove('hidden');
-                    preview.classList.remove('hidden');
-                    controls.classList.remove('hidden');
-                    break;
-                case 'preview':
-                    editor.classList.add('hidden');
-                    preview.classList.remove('hidden');
-                    controls.classList.remove('hidden');
-                    break;
-                case 'display':
-                    editor.classList.add('hidden');
-                    preview.classList.remove('hidden');
-                    controls.classList.add('hidden');
-                    break;
-            }
-            updatePreview();
-        }
-
-        let debounceTimer;
-        editor.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                updateURL();
-                updatePreview();
-            }, 300);
-        });
-
-        viewMode.addEventListener('change', () => {
-            updateLayout();
-            updateURL();
-        });
-
-        // Initialize from URL
-        const params = new URLSearchParams(window.location.search);
-        const mode = params.get('m');
-        viewMode.value = ['editor', 'split', 'preview', 'display'].includes(mode) ? mode : 'editor';
-        editor.value = params.get('c') || '';
-        updateLayout();
-    </script>
 </body>
 </html>

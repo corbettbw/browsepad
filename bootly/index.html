@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Google Sheets Data Entry</title>
+</head>
+<body>
+  <h1>Save Data to Google Sheets</h1>
+
+  <!-- Text Boxes for Input -->
+  <label for="columnA">Column A:</label>
+  <input type="text" id="columnA" placeholder="Enter text for Column A">
+  <br><br>
+  <label for="columnB">Column B:</label>
+  <input type="text" id="columnB" placeholder="Enter text for Column B">
+  <br><br>
+
+  <button onclick="saveToSheet()">Save to Google Sheet</button>
+
+  <p id="status"></p>
+
+  <script>
+    async function saveToSheet() {
+      const columnAValue = document.getElementById("columnA").value;
+      const columnBValue = document.getElementById("columnB").value;
+
+      if (!columnAValue || !columnBValue) {
+        document.getElementById("status").innerHTML = "Please fill out both text boxes.";
+        return;
+      }
+
+      // This is the URL of your deployed Google Apps Script web app
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwnMvjp2NOHbo8TQqAOGkvMYtDYtzROTJMUVbB_lA-mc4yYwN6--L7bBEjq22Y7hTcwBg/exec';
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ columnAValue, columnBValue }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById("status").innerHTML = "Data saved successfully!";
+        } else {
+          document.getElementById("status").innerHTML = `Error: ${result.message}`;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById("status").innerHTML = 'Failed to save data.';
+      }
+
+      // Clear input fields
+      document.getElementById("columnA").value = "";
+      document.getElementById("columnB").value = "";
+    }
+  </script>
+</body>
+</html>
