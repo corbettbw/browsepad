@@ -21,6 +21,12 @@
   <p id="status"></p>
 
   <script>
+    // Use CORS Anywhere proxy to bypass CORS issues
+    const proxyURL = 'https://cors-anywhere.herokuapp.com/';
+    
+    // This is the URL of your deployed Google Apps Script web app
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwnMvjp2NOHbo8TQqAOGkvMYtDYtzROTJMUVbB_lA-mc4yYwN6--L7bBEjq22Y7hTcwBg/exec';
+
     async function saveToSheet() {
       const columnAValue = document.getElementById("columnA").value;
       const columnBValue = document.getElementById("columnB").value;
@@ -30,31 +36,23 @@
         return;
       }
 
-      // This is the URL of your deployed Google Apps Script web app
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbwnMvjp2NOHbo8TQqAOGkvMYtDYtzROTJMUVbB_lA-mc4yYwN6--L7bBEjq22Y7hTcwBg/exec';
+      // Use the proxy + the Google Apps Script URL
+      const response = await fetch(proxyURL + scriptURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ columnAValue, columnBValue }),
+      });
 
-      try {
-        const response = await fetch(scriptURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ columnAValue, columnBValue }),
-        });
+      const result = await response.json();
 
-        const result = await response.json();
-
-        if (response.ok) {
-          document.getElementById("status").innerHTML = "Data saved successfully!";
-        } else {
-          document.getElementById("status").innerHTML = `Error: ${result.message}`;
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        document.getElementById("status").innerHTML = 'Failed to save data.';
+      if (response.ok) {
+        document.getElementById("status").innerHTML = "Data saved successfully!";
+      } else {
+        document.getElementById("status").innerHTML = `Error: ${result.error}`;
       }
 
-      // Clear input fields
       document.getElementById("columnA").value = "";
       document.getElementById("columnB").value = "";
     }
